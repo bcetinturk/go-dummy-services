@@ -9,6 +9,24 @@ import (
 	"os"
 )
 
+type Config struct {
+	ServiceBURL string
+	Port        string
+}
+
+func getenv(key string, fallback string) string {
+	val := os.Getenv(key)
+	if len(val) == 0 {
+		return fallback
+	}
+	return val
+}
+
+var appConfig = Config{
+	ServiceBURL: getenv("SERVICEA_SERVICEB_URL", "127.0.0.1:8081"),
+	Port:        getenv("SERVICEA_PORT", "8080"),
+}
+
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got / Request")
 	io.WriteString(w, "Check out /hello !\n")
@@ -17,7 +35,8 @@ func getRoot(w http.ResponseWriter, r *http.Request) {
 func getHello(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got /hello Request")
 
-	resp, _ := http.Get("http://127.0.0.1:8081/message")
+	log.Printf("Trying %s\n", appConfig.ServiceBURL)
+	resp, _ := http.Get(fmt.Sprintf("http://%s/message", appConfig.ServiceBURL))
 
 	body, _ := io.ReadAll(resp.Body)
 
@@ -31,7 +50,7 @@ func main() {
 	http.HandleFunc("/", getRoot)
 	http.HandleFunc("/hello", getHello)
 
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", appConfig.Port), nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		log.Fatalln("server closed")
 	} else if err != nil {

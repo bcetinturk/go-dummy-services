@@ -2,12 +2,30 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
 )
+
+type Config struct {
+	ServiceBURL string
+	Port        string
+}
+
+func getenv(key string, fallback string) string {
+	val := os.Getenv(key)
+	if len(val) == 0 {
+		return fallback
+	}
+	return val
+}
+
+var appConfig = Config{
+	Port: getenv("SERVICEB_PORT", "8081"),
+}
 
 func getMessage(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got /message Request")
@@ -23,7 +41,7 @@ func getMessage(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/message", getMessage)
 
-	err := http.ListenAndServe(":8081", nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", appConfig.Port), nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		log.Fatalln("server closed")
 	} else if err != nil {
