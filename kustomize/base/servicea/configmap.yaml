@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: servicea-env-configmap
+data:
+  SERVICEA_SERVICEB_URL: serviceb
+  SERVICEA_PORT: "8080"

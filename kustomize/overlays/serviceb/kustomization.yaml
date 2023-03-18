@@ -1,0 +1,10 @@
+resources:
+  - ../../base/serviceb
+images:
+  - name: bcetinturk/go-dummy-serviceb
+    newTag: "1"
+configMapGenerator:
+  - name: serviceb-env-configmap
+    behavior: replace
+    literals:
+    - SERVICEB_PORT=8081
