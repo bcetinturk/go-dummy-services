@@ -8,3 +8,6 @@ configMapGenerator:
     behavior: replace
     literals:
     - SERVICEB_PORT=8081
+namespace: dummy-testing
+patches:
+  - deployment.yaml

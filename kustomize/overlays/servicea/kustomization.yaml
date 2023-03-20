@@ -9,3 +9,6 @@ configMapGenerator:
     literals:
     - SERVICEA_SERVICEB_URL=serviceb
     - SERVICEA_PORT=8080
+namespace: dummy-testing
+patches:
+  - deployment.yaml
